@@ -1,0 +1,68 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 20px;
+    background-color: #f0f2f5;
+    color: #333;
+    line-height: 1.6;
+}
+
+.container {
+    max-width: 800px;
+    margin: 20px auto;
+    background-color: #fff;
+    padding: 30px;
+    border-radius: 8px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+}
+
+h1 {
+    color: #0056b3;
+    text-align: center;
+    margin-bottom: 25px;
+    border-bottom: 2px solid #eee;
+    padding-bottom: 15px;
+}
+
+.last-updated {
+    text-align: center;
+    font-size: 0.9em;
+    color: #666;
+    margin-bottom: 20px;
+}
+
+.log-container {
+    border: 1px solid #ddd;
+    padding: 15px;
+    max-height: 500px; /* Batasi tinggi kontainer */
+    overflow-y: auto; /* Aktifkan scroll jika kontennya panjang */
+    background-color: #fdfdfd;
+    border-radius: 5px;
+}
+
+.log-entry {
+    background-color: #e9efff; /* Warna latar belakang untuk setiap log */
+    margin-bottom: 10px;
+    padding: 12px;
+    border-radius: 6px;
+    border-left: 5px solid #007bff;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    word-wrap: break-word; /* Memastikan teks panjang pecah baris */
+}
+
+.log-entry:last-child {
+    margin-bottom: 0;
+}
+
+.log-timestamp {
+    font-size: 0.8em;
+    color: #555;
+    margin-bottom: 5px;
+    font-weight: bold;
+}
+
+.log-message {
+    font-size: 1em;
+    color: #333;
+    white-space: pre-wrap; /* Mempertahankan spasi dan baris baru dari pesan */
+}
