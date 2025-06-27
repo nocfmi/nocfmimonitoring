@@ -3,17 +3,182 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Telegram Monitoring Dashboard</title>
-    <link rel="stylesheet" href="style.css">
+    <title>Live Bot Notifications</title>
+    <style>
+        /* --- CSS untuk tampilan web --- */
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f2f5;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            min-height: 100vh;
+            box-sizing: border-box;
+        }
+        .container {
+            background-color: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 900px; /* Lebarkan sedikit */
+            padding: 25px; /* Tambah padding */
+            box-sizing: border-box;
+        }
+        h1 {
+            color: #333;
+            text-align: center;
+            margin-bottom: 25px; /* Jarak bawah */
+            font-size: 2.2em; /* Ukuran judul lebih besar */
+        }
+        #notifications-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            max-height: 75vh; /* Tinggi untuk scroll */
+            overflow-y: auto; /* Aktifkan scroll */
+            border: 1px solid #ddd; /* Border lebih jelas */
+            border-radius: 8px; /* Sudut lebih bulat */
+            background-color: #fdfdfd;
+            padding: 10px; /* Padding dalam list */
+        }
+        .notification-item {
+            padding: 12px 15px; /* Padding item lebih besar */
+            border-bottom: 1px solid #eee;
+            font-size: 0.95em; /* Ukuran font sedikit lebih besar */
+            color: #444;
+            line-height: 1.5;
+            display: flex; /* Untuk tata letak timestamp dan pesan */
+            align-items: flex-start;
+        }
+        .notification-item:last-child {
+            border-bottom: none;
+        }
+        .notification-item span.timestamp {
+            font-weight: bold;
+            color: #0056b3; /* Warna biru lebih gelap */
+            margin-right: 12px; /* Jarak lebih besar */
+            flex-shrink: 0; /* Cegah timestamp menyusut */
+            min-width: 150px; /* Minimal lebar timestamp */
+        }
+        .notification-content {
+            flex-grow: 1; /* Konten pesan mengisi sisa ruang */
+        }
+        .status-up {
+            color: #28a745; /* Green */
+            font-weight: bold;
+        }
+        .status-down {
+            color: #dc3545; /* Red */
+            font-weight: bold;
+        }
+        .loading-message {
+            text-align: center;
+            color: #888;
+            padding: 20px;
+        }
+        /* Scrollbar styling for better aesthetics */
+        #notifications-list::-webkit-scrollbar {
+            width: 8px;
+        }
+        #notifications-list::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 10px;
+        }
+        #notifications-list::-webkit-scrollbar-thumb {
+            background: #888;
+            border-radius: 10px;
+        }
+        #notifications-list::-webkit-scrollbar-thumb:hover {
+            background: #555;
+        }
+    </style>
 </head>
 <body>
     <div class="container">
-        <h1>Real-time Monitoring Log</h1>
-        <p class="last-updated">Last updated: <span id="last-updated-time">Loading...</span></p>
-        <div id="log-container" class="log-container">
-            <p>Loading messages...</p>
-        </div>
+        <h1>Live Bot Notifications from Telegram</h1>
+        <div id="loading" class="loading-message">Loading notifications...</div>
+        <ul id="notifications-list">
+            </ul>
     </div>
-    <script src="script.js"></script>
+
+    <script>
+        // --- PENTING: Ganti dengan URL publik Replit Anda yang akurat ---
+        // Contoh: 'https://nocfmibot.nama-anda.replit.dev'
+        const BACKEND_URL = 'https://ce21d270-9ac2-4574-b179-ab4a71aa7815-00-34chtcjjsi0z5.sisko.replit.dev/'; // Ganti dengan URL Replit Anda!
+
+        async function fetchNotifications() {
+            try {
+                // Tampilkan pesan loading saat data sedang diambil
+                document.getElementById('loading').style.display = 'block'; 
+                
+                // Melakukan request ke backend Replit Anda
+                const response = await fetch(`${BACKEND_URL}/get-notifications`);
+                
+                // Memeriksa apakah respons sukses (kode status 2xx)
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status} - ${response.statusText}`);
+                }
+                
+                // Parsing respons JSON
+                const notifications = await response.json();
+                
+                // Sembunyikan pesan loading setelah data diterima
+                document.getElementById('loading').style.display = 'none';
+
+                const notificationsList = document.getElementById('notifications-list');
+                notificationsList.innerHTML = ''; // Hapus notifikasi lama sebelum menambahkan yang baru
+                
+                // Tampilkan pesan jika tidak ada notifikasi
+                if (notifications.length === 0) {
+                    notificationsList.innerHTML = '<li class="notification-item" style="text-align: center; color: #888; display: block;">No notifications yet. Waiting for bot messages...</li>';
+                }
+
+                // Iterasi setiap notifikasi dan tambahkan ke daftar HTML
+                notifications.forEach(notif => {
+                    const listItem = document.createElement('li');
+                    listItem.classList.add('notification-item');
+
+                    const timestampSpan = document.createElement('span');
+                    timestampSpan.classList.add('timestamp');
+                    timestampSpan.textContent = `${notif.timestamp}:`;
+                    listItem.appendChild(timestampSpan);
+
+                    const contentDiv = document.createElement('div');
+                    contentDiv.classList.add('notification-content');
+                    let messageText = notif.message;
+                    let formattedMessage = messageText;
+
+                    // Logika untuk menyorot teks "Status: up" atau "Status: down"
+                    formattedMessage = formattedMessage.replace(/Status: up/gi, '<span class="status-up">Status: up</span>');
+                    formattedMessage = formattedMessage.replace(/Status: down/gi, '<span class="status-down">Status: down</span>');
+                    
+                    // Anda bisa menambahkan lebih banyak logika penyorotan di sini
+                    // Contoh: Bold nama device atau IP address
+                    // formattedMessage = formattedMessage.replace(/(Device:\d+\.\d+\.\d+\.\d+)/gi, '<strong>$1</strong>');
+
+                    contentDiv.innerHTML = formattedMessage; 
+                    listItem.appendChild(contentDiv);
+                    
+                    notificationsList.appendChild(listItem);
+                });
+
+                // Gulirkan daftar ke paling atas untuk menunjukkan notifikasi terbaru
+                notificationsList.scrollTop = 0;
+
+            } catch (error) {
+                console.error('Error fetching notifications:', error);
+                // Tampilkan pesan error di halaman jika terjadi masalah
+                document.getElementById('loading').textContent = `Error loading notifications: ${error.message}. Please check backend (Replit) or network.`;
+                document.getElementById('loading').style.display = 'block';
+            }
+        }
+
+        // Panggil fungsi fetchNotifications saat halaman pertama kali dimuat
+        fetchNotifications();
+
+        // Atur agar fetchNotifications dipanggil setiap 5 detik (untuk real-time)
+        setInterval(fetchNotifications, 5000); // Sesuaikan interval sesuai kebutuhan Anda
+    </script>
 </body>
 </html>
