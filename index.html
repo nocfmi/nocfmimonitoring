@@ -5,9 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Live Bot Notifications</title>
     <style>
-        /* --- CSS untuk tampilan web --- */
+        /* --- Basic CSS for UI Aesthetics --- */
         body {
-            font-family: Arial, sans-serif;
+            font-family: 'Inter', sans-serif; /* Menggunakan Inter sesuai instruksi */
             background-color: #f0f2f5;
             margin: 0;
             padding: 20px;
@@ -18,94 +18,113 @@
         }
         .container {
             background-color: #ffffff;
-            border-radius: 8px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            border-radius: 12px; /* Lebih rounded */
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1); /* Shadow lebih menonjol */
             width: 100%;
-            max-width: 900px; /* Lebarkan sedikit */
-            padding: 25px; /* Tambah padding */
+            max-width: 960px; /* Lebih lebar */
+            padding: 30px; /* Padding lebih besar */
             box-sizing: border-box;
+            display: flex;
+            flex-direction: column;
         }
         h1 {
-            color: #333;
+            color: #2c3e50; /* Warna judul lebih gelap */
             text-align: center;
-            margin-bottom: 25px; /* Jarak bawah */
-            font-size: 2.2em; /* Ukuran judul lebih besar */
+            margin-bottom: 30px; /* Jarak bawah lebih besar */
+            font-size: 2.5em; /* Ukuran judul lebih besar */
+            font-weight: 700; /* Lebih tebal */
         }
         #notifications-list {
             list-style: none;
             padding: 0;
             margin: 0;
-            max-height: 75vh; /* Tinggi untuk scroll */
+            max-height: 70vh; /* Tinggi untuk scroll */
             overflow-y: auto; /* Aktifkan scroll */
-            border: 1px solid #ddd; /* Border lebih jelas */
-            border-radius: 8px; /* Sudut lebih bulat */
+            border: 1px solid #e0e0e0; /* Border lebih halus */
+            border-radius: 10px; /* Sudut lebih bulat */
             background-color: #fdfdfd;
-            padding: 10px; /* Padding dalam list */
+            padding: 15px; /* Padding dalam list */
+            box-shadow: inset 0 1px 5px rgba(0,0,0,0.05); /* Shadow internal */
         }
         .notification-item {
-            padding: 12px 15px; /* Padding item lebih besar */
-            border-bottom: 1px solid #eee;
-            font-size: 0.95em; /* Ukuran font sedikit lebih besar */
-            color: #444;
-            line-height: 1.5;
-            display: flex; /* Untuk tata letak timestamp dan pesan */
+            padding: 15px 18px; /* Padding item lebih besar */
+            border-bottom: 1px solid #f0f0f0; /* Garis pemisah lebih halus */
+            font-size: 1em; /* Ukuran font lebih besar */
+            color: #34495e; /* Warna teks lebih gelap */
+            line-height: 1.6;
+            display: flex;
             align-items: flex-start;
+            transition: background-color 0.2s ease; /* Transisi hover */
+        }
+        .notification-item:hover {
+            background-color: #f8f8f8;
         }
         .notification-item:last-child {
             border-bottom: none;
         }
         .notification-item span.timestamp {
             font-weight: bold;
-            color: #0056b3; /* Warna biru lebih gelap */
-            margin-right: 12px; /* Jarak lebih besar */
-            flex-shrink: 0; /* Cegah timestamp menyusut */
-            min-width: 150px; /* Minimal lebar timestamp */
+            color: #007bff; /* Warna biru cerah */
+            margin-right: 15px; /* Jarak lebih besar */
+            flex-shrink: 0;
+            min-width: 180px; /* Minimal lebar timestamp lebih besar */
+            font-family: 'Roboto Mono', monospace; /* Font monospace untuk timestamp */
         }
         .notification-content {
-            flex-grow: 1; /* Konten pesan mengisi sisa ruang */
+            flex-grow: 1;
         }
         .status-up {
             color: #28a745; /* Green */
             font-weight: bold;
+            background-color: #e6ffe6; /* Latar belakang hijau muda */
+            padding: 2px 6px;
+            border-radius: 4px;
         }
         .status-down {
             color: #dc3545; /* Red */
             font-weight: bold;
+            background-color: #ffe6e6; /* Latar belakang merah muda */
+            padding: 2px 6px;
+            border-radius: 4px;
         }
         .loading-message {
             text-align: center;
             color: #888;
             padding: 20px;
+            font-size: 1.1em;
         }
         /* Scrollbar styling for better aesthetics */
         #notifications-list::-webkit-scrollbar {
-            width: 8px;
+            width: 10px; /* Lebar scrollbar lebih besar */
         }
         #notifications-list::-webkit-scrollbar-track {
             background: #f1f1f1;
             border-radius: 10px;
         }
         #notifications-list::-webkit-scrollbar-thumb {
-            background: #888;
+            background: #a0a0a0; /* Warna thumb lebih gelap */
             border-radius: 10px;
         }
         #notifications-list::-webkit-scrollbar-thumb:hover {
-            background: #555;
+            background: #777; /* Warna thumb saat hover */
         }
     </style>
+    <!-- Link Google Fonts for Inter and Roboto Mono -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&family=Roboto+Mono:wght@400&display=swap" rel="stylesheet">
 </head>
 <body>
     <div class="container">
         <h1>Live Bot Notifications from Telegram</h1>
         <div id="loading" class="loading-message">Loading notifications...</div>
         <ul id="notifications-list">
-            </ul>
+            <!-- Notifications will be loaded here by JavaScript -->
+        </ul>
     </div>
 
     <script>
         // --- PENTING: Ganti dengan URL publik Replit Anda yang akurat ---
-        // Contoh: 'https://nocfmibot.nama-anda.replit.dev'
-        const BACKEND_URL = 'https://ce21d270-9ac2-4574-b179-ab4a71aa7815-00-34chtcjjsi0z5.sisko.replit.dev'; // Ganti dengan URL Replit Anda!
+        // Contoh: 'https://nama-repl-anda.username-anda.replit.dev'
+        const BACKEND_URL = 'https://ce21d270-9ac2-4574-b179-ab4a71aa7815-00-34ohtcjjsi0z5.sisko.replit.dev'; // Ganti dengan URL Replit Anda!
 
         async function fetchNotifications() {
             try {
@@ -131,7 +150,7 @@
                 
                 // Tampilkan pesan jika tidak ada notifikasi
                 if (notifications.length === 0) {
-                    notificationsList.innerHTML = '<li class="notification-item" style="text-align: center; color: #888; display: block;">No notifications yet. Waiting for bot messages...</li>';
+                    notificationsList.innerHTML = '<li class="notification-item" style="text-align: center; color: #888; display: block; border: none;">No notifications yet. Waiting for bot messages...</li>';
                 }
 
                 // Iterasi setiap notifikasi dan tambahkan ke daftar HTML
@@ -154,8 +173,10 @@
                     formattedMessage = formattedMessage.replace(/Status: down/gi, '<span class="status-down">Status: down</span>');
                     
                     // Anda bisa menambahkan lebih banyak logika penyorotan di sini
-                    // Contoh: Bold nama device atau IP address
-                    // formattedMessage = formattedMessage.replace(/(Device:\d+\.\d+\.\d+\.\d+)/gi, '<strong>$1</strong>');
+                    // Contoh: Bold nama device atau IP address, menyesuaikan dengan format notifikasi bot
+                    // formattedMessage = formattedMessage.replace(/(Device:[\d\.]+)/gi, '<strong>$1</strong>');
+                    // formattedMessage = formattedMessage.replace(/(AP-[a-zA-Z0-9\-]+)/gi, '<strong>$1</strong>');
+
 
                     contentDiv.innerHTML = formattedMessage; 
                     listItem.appendChild(contentDiv);
@@ -177,7 +198,7 @@
         // Panggil fungsi fetchNotifications saat halaman pertama kali dimuat
         fetchNotifications();
 
-        // Atur agar fetchNotifications dipanggil setiap 5 detik (untuk real-time)
+        // Atur agar fetchNotifications dipanggil setiap 5 detik (untuk mendekati real-time)
         setInterval(fetchNotifications, 5000); // Sesuaikan interval sesuai kebutuhan Anda
     </script>
 </body>
